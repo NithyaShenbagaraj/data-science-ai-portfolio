@@ -1,0 +1,157 @@
+# Healthcare Risk Prediction
+
+An end-to-end machine learning project that studies binary heart-disease classification using the UCI Heart Disease dataset. The project demonstrates reproducible data acquisition, exploratory analysis, preprocessing, model comparison, evaluation, explainability, and an interactive Streamlit interface.
+
+> **Research and education only.** This model is not a medical device, is not clinically validated, and must not be used to diagnose, screen, or make treatment decisions for any person.
+
+## Problem statement
+
+Can routinely recorded clinical attributes help a machine-learning model distinguish records with an observed presence of heart disease from records without it in the UCI Cleveland data?
+
+The target is derived from the source field `num`: values greater than zero are mapped to 1 (presence); zero is mapped to 0 (absence). This is a dataset label, not a patient's future risk or a clinical diagnosis.
+
+## Dataset
+
+- Source: [UCI Machine Learning Repository — Heart Disease](https://archive.ics.uci.edu/dataset/45/heart+disease)
+- Dataset ID: 45
+- The UCI collection contains records from multiple institutions. This implementation uses the dataset returned by the UCI repository client; inspect the dataset metadata and sample count after download.
+- The original data contains missing values, represented in some fields by `?`. These are converted to missing values and imputed inside the training pipeline.
+- The raw dataset is downloaded locally and is not committed to this repository.
+
+## Technical workflow
+
+1. Download and cache the source data.
+2. Validate columns, target values, and missingness.
+3. Split data using a stratified holdout set.
+4. Impute numeric and categorical features separately.
+5. Scale numeric features and one-hot encode categorical features.
+6. Compare Logistic Regression, Random Forest, and XGBoost using stratified cross-validation on the training partition.
+7. Select the model with the highest mean cross-validation ROC-AUC and evaluate it once on the holdout set.
+8. Save the fitted preprocessing/model pipeline and evaluation artifacts.
+9. Generate model explanations with SHAP.
+10. Run a Streamlit interface for a single-record demonstration.
+
+## Repository layout
+
+```text
+healthcare-risk-prediction/
+├── app.py
+├── requirements.txt
+├── README.md
+├── data/
+│   └── raw/                 # downloaded data; ignored by Git
+├── models/                  # trained pipeline; ignored by Git
+├── reports/                 # generated metrics and plots
+├── src/
+│   ├── __init__.py
+│   ├── data.py
+│   └── train.py
+└── tests/
+    └── test_data.py
+```
+
+## Setup
+
+Python 3.10 or 3.11 is recommended.
+
+```bash
+cd 01-machine-learning/healthcare-risk-prediction
+python -m venv .venv
+```
+
+Activate the environment:
+
+```bash
+# macOS / Linux
+source .venv/bin/activate
+
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+## Train and evaluate
+
+From this project directory:
+
+```bash
+python -m src.train
+```
+
+The first run downloads the dataset. The training script writes:
+
+- `models/healthcare_risk_pipeline.joblib`
+- `reports/metrics.json`
+- `reports/model_comparison.csv`
+- `reports/test_predictions.csv`
+- `reports/confusion_matrix.png`
+- `reports/roc_curve.png`
+
+The split uses a fixed random seed for reproducibility. Cross-validation is performed only on the training partition; the holdout partition is reserved for final evaluation.
+
+## Explain the fitted model
+
+After training:
+
+```bash
+python -m src.explain
+```
+
+This generates a SHAP summary plot in `reports/shap_summary.png`. SHAP values explain model output associations; they do not establish causality.
+
+## Launch the demo
+
+```bash
+streamlit run app.py
+```
+
+The app requires a trained model. Run training first.
+
+## Tests
+
+```bash
+pytest -q
+```
+
+## Evaluation strategy
+
+The project reports:
+
+- ROC-AUC
+- Average precision / PR-AUC
+- Accuracy
+- Precision
+- Recall (sensitivity)
+- F1-score
+- Specificity
+- Confusion matrix
+
+Accuracy alone is not sufficient for imbalanced or high-impact classification. Review sensitivity, specificity, precision-recall trade-offs, calibration, and uncertainty before drawing conclusions. The small, historical dataset and single holdout split limit generalisability.
+
+## Responsible-use limitations
+
+- The dataset is small, historical, and not representative of all current populations or care settings.
+- The project does not establish prospective performance, clinical utility, fairness, or external validity.
+- A model score is not an individual diagnosis or a substitute for a qualified clinician.
+- Do not enter real patient information into the demo.
+- Any real-world clinical application would require appropriate governance, privacy controls, external validation, prospective evaluation, and regulatory review.
+
+## Next improvements
+
+- Add a documented EDA notebook with cohort and missingness analysis.
+- Add nested cross-validation and confidence intervals.
+- Evaluate calibration and decision thresholds without tuning on the final test set.
+- Add subgroup performance analysis where sample sizes support responsible interpretation.
+- Package the service with FastAPI and Docker after the modelling workflow is stable.
+
+## Author
+
+Nithya Shenbagaraj — Data Analyst transitioning into Applied Machine Learning and AI Engineering.
+
+[Portfolio repository](https://github.com/NithyaShenbagaraj/data-science-ai-portfolio)
