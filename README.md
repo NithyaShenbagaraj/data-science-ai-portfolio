@@ -1,135 +1,97 @@
 # Hi, I'm Nithya Shenbagaraj 👋
 
-### Data Analyst | Aspiring Data Scientist & AI Engineer
+### Data Analyst | Applied Machine Learning | AI Engineering
 
-I am a Data Analyst with 4+ years of experience in data analytics, business intelligence, and data visualization. I enjoy transforming complex datasets into meaningful insights and building data-driven solutions that solve real-world problems.
+I am a Data Analyst with 4+ years of experience in data analytics, business intelligence, SQL, Python, Tableau, and Power BI. I build data-driven solutions and am expanding my work into applied machine learning, deep learning, NLP, and AI engineering.
 
-My technical background includes **Python, SQL, Tableau, and Power BI**, with experience in dashboard development, data analysis, reporting, and analytics workflows.
-
-I am expanding my expertise into **Data Science and AI Engineering**, focusing on Machine Learning, Deep Learning, Natural Language Processing, Generative AI, Large Language Models (LLMs), and production-ready AI applications.
-
-This repository is my hands-on learning and project portfolio, showcasing my journey from data analytics to building intelligent, scalable, and practical AI solutions.
+This repository is my hands-on portfolio. It is organized around seven end-to-end projects, progressing from predictive modelling to LLM-powered applications. Project status is stated transparently; planned work is not presented as completed experience.
 
 ---
 
-## 🎯 Career Focus
+## Career focus
 
-- Data Science and Applied Machine Learning
-- Deep Learning and Neural Networks
-- Natural Language Processing and Transformers
-- Generative AI and Large Language Models
+- Applied machine learning and predictive analytics
+- Healthcare data science and responsible model evaluation
+- Deep learning and neural networks
+- NLP, embeddings, and transformer fine-tuning
 - Retrieval-Augmented Generation (RAG)
-- AI Agents and Agentic Workflows
-- Model Deployment and AI Application Development
+- Agentic workflows and AI tool calling
+- AI-powered analytics and application development
 
-## 🛠️ Technical Skills
+## Technical toolkit
 
-### Programming & Data Analytics
+| Area | Technologies |
+|---|---|
+| Programming & data | Python, SQL, Pandas, NumPy |
+| Business intelligence | Tableau, Power BI |
+| Machine learning | Scikit-learn, XGBoost, SHAP |
+| Deep learning | PyTorch, CNNs |
+| NLP | Hugging Face, Transformers, embeddings |
+| Generative AI | LLMs, RAG, vector search, LangGraph |
+| Application engineering | FastAPI, Streamlit, Docker, Git, GitHub |
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![SQL](https://img.shields.io/badge/SQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
-![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
+*Tools listed under the AI project stack are technologies I am developing through hands-on projects; they should not be interpreted as years of professional production experience.*
 
-### Business Intelligence & Visualization
+## Project portfolio
 
-![Tableau](https://img.shields.io/badge/Tableau-E97627?style=for-the-badge&logo=tableau&logoColor=white)
-![Power BI](https://img.shields.io/badge/Power_BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
+| # | Project | Demonstrates | Status |
+|---:|---|---|---|
+| 1 | [Healthcare Risk Prediction](./01-machine-learning/healthcare-risk-prediction/) | End-to-end ML, XGBoost, SHAP, evaluation | In progress |
+| 2 | Customer Churn Prediction | Classification, feature engineering, explainability | Planned |
+| 3 | Deep Learning Lab | CNN, PyTorch, neural network training | Planned |
+| 4 | NLP & Transformer Applications | Text classification, embeddings, fine-tuning | Planned |
+| 5 | Healthcare Research RAG | Document processing, vector search, LLMs | Planned |
+| 6 | Healthcare AI Agent | LangGraph, tool calling, multi-step workflows | Planned |
+| 7 | AI-Powered Analytics Assistant | SQL generation, data analysis, LLM integration | Planned |
 
-### Machine Learning & Deep Learning
+### 1. Healthcare Risk Prediction
 
-![Scikit Learn](https://img.shields.io/badge/Scikit--Learn-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)
-![XGBoost](https://img.shields.io/badge/XGBoost-EC6B23?style=for-the-badge)
-![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
+An educational binary classification project using the public UCI Heart Disease dataset. The workflow includes data validation, preprocessing, cross-validation model comparison, holdout evaluation, SHAP explanations, and a Streamlit demonstration interface.
 
-### NLP & Generative AI
+- [Open project documentation and source code](./01-machine-learning/healthcare-risk-prediction/)
+- [UCI Heart Disease dataset](https://archive.ics.uci.edu/dataset/45/heart+disease)
 
-![Hugging Face](https://img.shields.io/badge/Hugging_Face-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
-![LangChain](https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge)
-![OpenAI](https://img.shields.io/badge/LLM_Applications-412991?style=for-the-badge&logo=openai&logoColor=white)
+**Responsible-use note:** This is a learning and research project, not a clinically validated diagnostic or screening tool. It must not be used for patient care or medical decisions.
 
-### AI Engineering & Deployment
+## Portfolio website
 
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+A responsive personal portfolio website is available from the repository root:
 
-*Note: The technologies in the Machine Learning, Deep Learning, Generative AI, and AI Engineering sections represent my learning and project development stack. I am continuously strengthening my practical experience with them.*
+- [Open the website source](./index.html)
+- Once GitHub Pages is enabled in repository Settings → Pages, the site can be published from the `main` branch and `/(root)`.
 
----
-
-## 📂 Project Portfolio
-
-This repository is organised into six major categories to demonstrate my technical capabilities across Data Science and AI Engineering.
-
-| Category | Focus Areas | Repository |
-|---|---|---|
-| 🐍 Python Projects | Python programming, OOP, automation, data processing | [Explore](./python-projects/) |
-| 🤖 Machine Learning | Supervised learning, unsupervised learning, feature engineering, model evaluation | [Explore](./machine-learning/) |
-| 🧠 Deep Learning | Neural networks, CNNs, model training, PyTorch | [Explore](./deep-learning/) |
-| 📝 NLP | Text preprocessing, sentiment analysis, transformers, text classification | [Explore](./nlp/) |
-| ✨ Generative AI | LLMs, prompt engineering, RAG, embeddings, vector databases | [Explore](./generative-ai/) |
-| ⚙️ AI Engineering | AI agents, LangGraph, FastAPI, deployment, end-to-end AI applications | [Explore](./ai-engineering/) |
-
-## 🌟 Featured Projects
-
-*Projects will be added here as they are completed and documented.*
-
-| Project | Category | Technologies | Status |
-|---|---|---|---|
-| Healthcare Risk Prediction | Machine Learning | Python, Scikit-learn, XGBoost, SHAP | Planned |
-| Customer Churn Prediction | Machine Learning | Python, Pandas, Scikit-learn | Planned |
-| Image Classification System | Deep Learning | Python, PyTorch, CNN | Planned |
-| NLP Text Classification | NLP | Python, Transformers, Hugging Face | Planned |
-| Healthcare Research Assistant | Generative AI | LLMs, RAG, Embeddings, Vector DB | Planned |
-| AI-Powered Analytics Assistant | AI Engineering | Python, SQL, LLMs, FastAPI | Planned |
-| Intelligent AI Agent | AI Engineering | LangGraph, LLMs, Tools | Planned |
-
-Each completed project will include:
-
-- Problem statement and business use case
-- Dataset description and preprocessing
-- Exploratory Data Analysis (where applicable)
-- Model architecture and implementation
-- Training, evaluation, and performance metrics
-- Key findings and limitations
-- Installation and execution instructions
-- Screenshots, visualisations, and architecture diagrams
-
-## 🏥 Domain Interests
-
-I am particularly interested in applying Data Science and AI to practical business and healthcare problems, including:
-
-- Healthcare analytics and predictive modelling
-- Patient risk prediction
-- Medical data analysis
-- Business intelligence automation
-- Intelligent reporting and analytics assistants
-- AI-powered decision support systems
-
-## 📜 Certifications
+## Certifications
 
 - Tableau Desktop Specialist
 - MySQL for Data Analytics
 - Complete SQL Bootcamp
 
-## 📈 My Development Goals
+## Professional experience
 
-- Strengthen Python programming and advanced SQL.
-- Build end-to-end Machine Learning projects.
-- Develop practical Deep Learning and NLP applications.
-- Build LLM-powered applications using RAG and AI agents.
-- Learn model serving, API development, testing, and deployment.
-- Develop a strong portfolio of production-oriented AI projects.
+- Data Analyst — VAANTECH | May 2024 – Present
+- Senior BI Developer — 4Labs Technologies | May 2023 – April 2024
 
-## 📬 Connect With Me
+## Repository structure
 
-[![GitHub](https://img.shields.io/badge/GitHub-NithyaShenbagaraj-181717?style=for-the-badge&logo=github)](https://github.com/NithyaShenbagaraj)
+```text
+.
+├── 01-machine-learning/
+│   └── healthcare-risk-prediction/
+│       ├── app.py
+│       ├── src/
+│       ├── tests/
+│       ├── data/
+│       ├── models/
+│       ├── reports/
+│       ├── requirements.txt
+│       └── README.md
+├── index.html
+└── README.md
+```
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/)
+## Connect
 
-**I believe in learning by building. This repository documents my journey of turning data into insights and ideas into intelligent solutions.**
+- [GitHub](https://github.com/NithyaShenbagaraj)
+- [LinkedIn](https://www.linkedin.com/)
 
-⭐ Feel free to explore my repositories and follow my journey!
+**Learning by building:** this portfolio documents my progression from analytics and business intelligence into practical data science and AI engineering.
