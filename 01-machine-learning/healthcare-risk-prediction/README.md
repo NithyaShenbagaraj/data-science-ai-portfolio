@@ -45,6 +45,8 @@ healthcare-risk-prediction/
 ├── src/
 │   ├── __init__.py
 │   ├── data.py
+│   ├── eda.py
+│   ├── explain.py
 │   └── train.py
 └── tests/
     └── test_data.py
@@ -95,6 +97,16 @@ The first run downloads the dataset. The training script writes:
 
 The split uses a fixed random seed for reproducibility. Cross-validation is performed only on the training partition; the holdout partition is reserved for final evaluation.
 
+## Explore the dataset
+
+Run the descriptive analysis before training:
+
+```bash
+python -m src.eda
+```
+
+It writes a label and missingness overview, a cohort summary, numeric feature statistics, and categorical value counts to `reports/`. These summaries describe the downloaded sample; they are not clinical conclusions.
+
 ## Explain the fitted model
 
 After training:
@@ -142,9 +154,8 @@ Accuracy alone is not sufficient for imbalanced or high-impact classification. R
 - Do not enter real patient information into the demo.
 - Any real-world clinical application would require appropriate governance, privacy controls, external validation, prospective evaluation, and regulatory review.
 
-## Next improvements
+## Future improvements
 
-- Add a documented EDA notebook with cohort and missingness analysis.
 - Add nested cross-validation and confidence intervals.
 - Evaluate calibration and decision thresholds without tuning on the final test set.
 - Add subgroup performance analysis where sample sizes support responsible interpretation.
