@@ -47,7 +47,8 @@ healthcare-risk-prediction/
 │   ├── data.py
 │   ├── eda.py
 │   ├── explain.py
-│   └── train.py
+│   ├── train.py
+│   └── tune.py
 └── tests/
     └── test_data.py
 ```
@@ -145,6 +146,61 @@ The project reports:
 - Confusion matrix
 
 Accuracy alone is not sufficient for imbalanced or high-impact classification. Review sensitivity, specificity, precision-recall trade-offs, calibration, and uncertainty before drawing conclusions. The small, historical dataset and single holdout split limit generalisability.
+
+## Hyperparameter tuning
+
+A separate experiment optimized Logistic Regression and Random Forest using hyperparameter search.
+
+### Search methodology
+
+**Logistic Regression — GridSearchCV**
+- C values: [0.01, 0.1, 1, 10, 100]
+- Class weights: None, balanced
+- Scoring: ROC-AUC
+- Cross-validation: Stratified 5-fold
+
+**Random Forest — RandomizedSearchCV**
+- Estimators: [200, 400, 600]
+- Maximum depth: [None, 3, 5, 8]
+- Minimum samples split: [2, 5, 10]
+- Minimum samples leaf: [1, 2, 4]
+- Maximum features: [sqrt, 0.8]
+- Class weights: None, balanced, balanced_subsample
+- Search iterations: 30
+- Scoring: ROC-AUC
+- Cross-validation: Stratified 5-fold
+
+### Best configurations
+
+| Model | Best CV ROC-AUC | Best parameters |
+|---|---:|---|
+| Tuned Logistic Regression | 0.90314 | C = 0.1, class_weight = balanced |
+| Tuned Random Forest | 0.90162 | 400 estimators, depth = 5, min_samples_split = 10, min_samples_leaf = 2, max_features = sqrt, class_weight = balanced |
+
+Tuned Logistic Regression was selected based on its higher mean cross-validation ROC-AUC.
+
+### Baseline vs tuned performance
+
+| Metric | Baseline | Tuned |
+|---|---:|---:|
+| ROC-AUC | 96.65% | 96.65% |
+| Average Precision | 96.34% | 96.39% |
+| Accuracy | 86.89% | 88.52% |
+| Precision | 81.25% | 83.87% |
+| Recall / Sensitivity | 92.86% | 92.86% |
+| Specificity | 81.82% | 84.85% |
+| F1-score | 86.67% | 88.14% |
+
+### Findings and limitations
+
+- Tuning modestly improved accuracy, precision, specificity, and F1-score.
+- Recall remained unchanged.
+- ROC-AUC remained approximately the same.
+- The tuned model correctly classified one additional negative-class observation on the 61-row holdout set.
+
+These results are exploratory. The dataset is small, and holdout results have been inspected during model development. Independent external validation is necessary before drawing conclusions about generalisation.
+
+The tuning implementation is available in `src/tune.py`. Generated reports and model artifacts are excluded from version control.
 
 ## Responsible-use limitations
 
