@@ -59,8 +59,11 @@ def build_preprocessor(numeric_features: list[str], categorical_features: list[s
 def build_models() -> dict[str, object]:
     models: dict[str, object] = {
         "Logistic Regression": LogisticRegression(
-            max_iter=2000, class_weight="balanced", random_state=RANDOM_STATE
-        ),
+            solver="liblinear",
+            max_iter=2000,
+            class_weight="balanced",
+            random_state=42
+),
         "Random Forest": RandomForestClassifier(
             n_estimators=400,
             min_samples_leaf=2,
