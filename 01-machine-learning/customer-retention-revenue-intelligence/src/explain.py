@@ -19,16 +19,24 @@ def main():
     columns = NUMERIC_FEATURES + CATEGORICAL_FEATURES
     sample = test[columns].sample(n=min(500, len(test)), random_state=42)
     transformed = model.named_steps["preprocess"].transform(sample)
+    # OneHotEncoder may return a SciPy sparse matrix. SHAP TreeExplainer
+    # expects a dense numeric array for this scikit-learn RandomForest model.
+    if hasattr(transformed, "toarray"):
+        transformed = transformed.toarray()
     names = model.named_steps["preprocess"].get_feature_names_out()
     classifier = model.named_steps["model"]
 
-    # shap.Explainer dispatches to TreeExplainer or LinearExplainer as appropriate.
-    background = transformed[:min(100, transformed.shape[0])]
-    explainer = shap.Explainer(classifier, background)
-    explanation = explainer(transformed)
-    values = explanation.values
-    if getattr(values, "ndim", 0) == 3:
-        values = values[:, :, 1]
+    # Explain the fitted classifier using the already-transformed features.
+    explainer = shap.TreeExplainer(classifier)
+    explanation = explainer.shap_values(transformed)
+    # SHAP versions differ: binary classifiers may return a list (one array
+    # per class) or a 3-D array. Keep the positive-class explanation.
+    if isinstance(explanation, list):
+        values = explanation[1] if len(explanation) > 1 else explanation[0]
+    else:
+        values = explanation
+        if getattr(values, "ndim", 0) == 3:
+            values = values[:, :, 1]
 
     OUT.mkdir(parents=True, exist_ok=True)
     shap.summary_plot(values, transformed, feature_names=names, show=False, max_display=18)
