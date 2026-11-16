@@ -32,7 +32,7 @@ jobs:
           cache: pip
           cache-dependency-path: 01-machine-learning/customer-retention-revenue-intelligence/requirements.txt
       - name: Install test dependencies
-        run: python -m pip install --upgrade pip pandas numpy duckdb pytest
+        run: python -m pip install --upgrade pip pandas numpy duckdb scikit-learn pytest
       - name: Compile project modules
         run: python -m py_compile app.py src/*.py tests/*.py
       - name: Run unit tests
