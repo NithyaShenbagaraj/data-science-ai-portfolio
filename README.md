@@ -37,7 +37,7 @@ This repository is my hands-on portfolio. It is organized around seven end-to-en
 | # | Project | Demonstrates | Status |
 |---:|---|---|---|
 | 1 | [Healthcare Risk Prediction](./01-machine-learning/healthcare-risk-prediction/) | End-to-end ML, XGBoost, SHAP, evaluation | In progress |
-| 2 | Customer Churn Prediction | Classification, feature engineering, explainability | Planned |
+| 2 | [Customer Retention & Revenue Intelligence](./01-machine-learning/customer-retention-revenue-intelligence/) | DuckDB SQL, RFM / cohorts, repeat-purchase ML, SHAP, Streamlit | In progress |
 | 3 | Deep Learning Lab | CNN, PyTorch, neural network training | Planned |
 | 4 | NLP & Transformer Applications | Text classification, embeddings, fine-tuning | Planned |
 | 5 | Healthcare Research RAG | Document processing, vector search, LLMs | Planned |
@@ -52,6 +52,15 @@ An educational binary classification project using the public UCI Heart Disease 
 - [UCI Heart Disease dataset](https://archive.ics.uci.edu/dataset/45/heart+disease)
 
 **Responsible-use note:** This is a learning and research project, not a clinically validated diagnostic or screening tool. It must not be used for patient care or medical decisions.
+
+### 2. Customer Retention & Revenue Intelligence
+
+A retail transaction analytics and repeat-purchase propensity project using the UCI Online Retail II workbook. The project combines DuckDB SQL analytics, customer RFM and cohort analysis, leakage-aware 180-day features, a 90-day repeat-purchase label, chronological model evaluation, SHAP and Streamlit scoring.
+
+- [Open project documentation and source code](./01-machine-learning/customer-retention-revenue-intelligence/)
+- [UCI Online Retail II dataset](https://archive.ics.uci.edu/dataset/502/online+retail%2Bii)
+
+This predicts repeat purchase within a defined future window; it is not a direct contractual churn label.
 
 ## Portfolio website
 
