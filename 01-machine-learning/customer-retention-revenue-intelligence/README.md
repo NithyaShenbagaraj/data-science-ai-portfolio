@@ -36,6 +36,28 @@ UCI workbook -> Python ingestion and validation -> cleaned Parquet + DuckDB -> S
 - tests/test_features.py: feature and label boundary tests
 - models and reports: generated artifacts, excluded from Git
 
+## Guided Jupyter notebooks
+
+The notebooks provide the step-by-step analytical narrative. The `src/` modules remain the reusable implementation used by tests and the Streamlit app; `app.py`, SQL scripts and tests remain Python/SQL files.
+
+| Notebook | Purpose |
+|---|---|
+| `notebooks/01_data_understanding.ipynb` | Workbook structure, schema and data-quality profiling |
+| `notebooks/02_cleaning_and_sql_analytics.ipynb` | Cleaning pipeline and DuckDB business queries |
+| `notebooks/03_customer_rfm_and_cohorts.ipynb` | RFM, cohort retention and revenue concentration |
+| `notebooks/04_feature_engineering.ipynb` | Past-only features and forward repeat-purchase label |
+| `notebooks/05_model_training_evaluation.ipynb` | Temporal model selection and held-out evaluation |
+| `notebooks/06_model_explainability.ipynb` | SHAP global explanations |
+
+Install the optional notebook environment after the core project dependencies:
+
+~~~bash
+pip install -r requirements-notebooks.txt
+jupyter lab
+~~~
+
+Open the notebooks from the project folder and run them in numerical order. Notebook 01 requires the UCI workbook; later notebooks depend on the outputs from earlier stages. The notebooks are committed without execution outputs and have not been run against the local workbook yet.
+
 ## 1. Obtain the data
 Download online_retail_II.xlsx (approximately 43.5 MB) from the official UCI page and place it at data/raw/online_retail_II.xlsx. The workbook contains two annual sheets; ingestion combines both. Do not commit the raw workbook, processed database or customer-level exports.
 
