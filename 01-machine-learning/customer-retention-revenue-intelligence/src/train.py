@@ -10,7 +10,7 @@ from sklearn.metrics import average_precision_score, confusion_matrix, f1_score,
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from src.data import ROOT
-from src.features import CATEGORICAL_FEATURES, FEATURES_FILE, NUMERIC_FEATURES, TARGET
+from src.features import CATEGORICAL_FEATURES, FEATURES_FILE, HORIZON_DAYS, NUMERIC_FEATURES, TARGET
 
 MODEL_DIR = ROOT / "models"
 REPORT_DIR = ROOT / "reports"
@@ -24,6 +24,39 @@ def make_pipeline(estimator):
         ("categorical", categorical, CATEGORICAL_FEATURES),
     ])
     return Pipeline([("preprocess", prep), ("model", estimator)])
+
+
+def chronological_split(data, embargo_days=HORIZON_DAYS):
+    """Split by snapshot date; each later period starts after prior labels mature."""
+    dates = pd.DatetimeIndex(sorted(pd.to_datetime(data["snapshot_date"]).dropna().unique()))
+    if len(dates) < 8:
+        raise ValueError(
+            f"Need at least 8 distinct snapshot months for a temporal split; found {len(dates)}."
+        )
+
+    train_end_index = max(1, int(len(dates) * 0.45) - 1)
+    train_end = dates[train_end_index]
+    validation_candidates = dates[dates >= train_end + pd.Timedelta(days=embargo_days)]
+    if len(validation_candidates) < 3:
+        raise ValueError("Not enough dates remain after the training embargo for validation and test.")
+
+    validation_start = validation_candidates[0]
+    validation_start_index = dates.get_loc(validation_start)
+    validation_end_index = min(
+        validation_start_index + max(1, int(len(dates) * 0.10)),
+        len(dates) - 2,
+    )
+    validation_end = dates[validation_end_index]
+    test_candidates = dates[dates >= validation_end + pd.Timedelta(days=embargo_days)]
+    if len(test_candidates) == 0:
+        raise ValueError("No test dates remain after the validation-label embargo.")
+
+    train = data[pd.to_datetime(data["snapshot_date"]) <= train_end].copy()
+    validation = data[pd.to_datetime(data["snapshot_date"]).between(validation_start, validation_end)].copy()
+    test = data[pd.to_datetime(data["snapshot_date"]) >= test_candidates[0]].copy()
+    if min(len(train), len(validation), len(test)) == 0:
+        raise ValueError("Temporal split produced an empty partition.")
+    return train, validation, test
 
 
 def evaluate(y, probability):
@@ -48,13 +81,7 @@ def main():
         raise FileNotFoundError("Run python -m src.features first.")
     data = pd.read_parquet(FEATURES_FILE)
     data["snapshot_date"] = pd.to_datetime(data["snapshot_date"])
-    # The 90-day embargo prevents an earlier forward label from overlapping
-    # a later period's feature history.
-    train = data[data.snapshot_date <= "2010-10-01"]
-    validation = data[data.snapshot_date.between("2011-02-01", "2011-03-01")]
-    test = data[data.snapshot_date >= "2011-07-01"]
-    if min(len(train), len(validation), len(test)) == 0:
-        raise ValueError("Temporal split is empty. Inspect snapshot dates; retain a 90-day embargo.")
+    train, validation, test = chronological_split(data)
     cols = NUMERIC_FEATURES + CATEGORICAL_FEATURES
     candidates = {
         "logistic_regression": LogisticRegression(max_iter=1500, class_weight="balanced", random_state=42),
@@ -100,6 +127,7 @@ def main():
         "train_period": [str(train.snapshot_date.min().date()), str(train.snapshot_date.max().date())],
         "validation_period": [str(validation.snapshot_date.min().date()), str(validation.snapshot_date.max().date())],
         "test_period": [str(test.snapshot_date.min().date()), str(test.snapshot_date.max().date())],
+        "label_horizon_embargo_days": HORIZON_DAYS,
         "validation_metrics": validation_metrics,
         "test_metrics": test_metrics,
         "capacity_metrics": capacity,
