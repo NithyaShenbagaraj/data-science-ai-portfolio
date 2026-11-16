@@ -1,0 +1,5 @@
+# Optional dependencies for the guided Jupyter notebooks.
+# Install the project runtime first, then this file.
+-r requirements.txt
+jupyterlab>=4,<5
+ipykernel>=6,<7
