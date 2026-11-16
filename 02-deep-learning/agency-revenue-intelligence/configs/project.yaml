@@ -1,0 +1,22 @@
+project:
+  name: agency-revenue-intelligence
+  timezone: UTC
+  currency: INR
+
+forecasting:
+  agency_revenue:
+    target: recognized_agency_revenue
+    frequency: monthly
+    horizons: [1, 3]
+  campaign_revenue:
+    target: attributed_campaign_revenue
+    frequency: daily
+    horizons: [7, 30]
+
+evaluation:
+  chronological_split: true
+  metrics: [mae, rmse, wape, forecast_bias]
+
+data:
+  synthetic_records_must_be_labelled: true
+  prevent_future_data_leakage: true
