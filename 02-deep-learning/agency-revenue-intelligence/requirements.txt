@@ -1,0 +1,33 @@
+# Core data and analytics
+numpy>=1.26
+pandas>=2.2
+duckdb>=1.1
+pyarrow>=18
+scikit-learn>=1.5
+statsmodels>=0.14
+
+# Deep learning
+torch>=2.5
+
+# Visualization and reporting
+matplotlib>=3.9
+plotly>=5.24
+
+# API and application
+fastapi>=0.115
+uvicorn[standard]>=0.32
+streamlit>=1.40
+pydantic>=2.9
+
+# Persistence and configuration
+sqlalchemy>=2.0
+psycopg[binary]>=3.2
+python-dotenv>=1.0
+PyYAML>=6.0
+
+# Experiment tracking
+mlflow>=2.17
+
+# Quality
+pytest>=8.3
+httpx>=0.27
