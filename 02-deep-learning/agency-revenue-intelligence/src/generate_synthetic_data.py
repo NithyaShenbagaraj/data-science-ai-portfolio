@@ -74,9 +74,11 @@ def generate_datasets(
         contract_start = pd.Timestamp(row.acquisition_date).to_period("M")
         contract_number = 1
         while contract_start <= month_periods[-1]:
-            contract_end = min(contract_start + 11, month_periods[-1])
-            if churn_period is not None and contract_start > churn_period:
+            if churn_period is not None and contract_start >= churn_period:
                 break
+            contract_end = min(contract_start + 11, month_periods[-1])
+            if churn_period is not None:
+                contract_end = min(contract_end, churn_period - 1)
             contract_rows.append({
                 "contract_id": f"CT-{row.client_id}-{contract_number:02d}",
                 "client_id": row.client_id,
