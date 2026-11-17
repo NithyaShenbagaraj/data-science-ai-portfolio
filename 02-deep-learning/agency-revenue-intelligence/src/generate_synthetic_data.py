@@ -113,13 +113,17 @@ def generate_datasets(
                 0.0,
                 base_project_fee * seasonal * float(rng.normal(1.0, 0.15)),
             )
-            recognized = retainer + project_fee
+            # Round each revenue component first, then derive the total from
+            # those rounded components so the accounting identity reconciles.
+            retainer_rounded = round(retainer, 2)
+            project_fee_rounded = round(project_fee, 2)
+            recognized = round(retainer_rounded + project_fee_rounded, 2)
             client_month_rows.append({
                 "month": _month_end(period),
                 "client_id": client.client_id,
-                "retainer_revenue_inr": round(retainer, 2),
-                "project_fee_revenue_inr": round(project_fee, 2),
-                "recognized_agency_revenue": round(recognized, 2),
+                "retainer_revenue_inr": retainer_rounded,
+                "project_fee_revenue_inr": project_fee_rounded,
+                "recognized_agency_revenue": recognized,
                 "synthetic_data": True,
             })
     client_month = pd.DataFrame(client_month_rows)
