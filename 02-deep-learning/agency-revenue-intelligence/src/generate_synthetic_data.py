@@ -71,7 +71,7 @@ def generate_datasets(
         client_churn_month[row.client_id] = churn_period
         base = float(row.monthly_retainer_inr)
         client_base_retainer[row.client_id] = base
-        contract_start = first_month
+        contract_start = pd.Timestamp(row.acquisition_date).to_period("M")
         contract_number = 1
         while contract_start <= month_periods[-1]:
             contract_end = min(contract_start + 11, month_periods[-1])
@@ -99,7 +99,7 @@ def generate_datasets(
         for month_index, period in enumerate(month_periods):
             if period < acquired_period or (churn_period is not None and period >= churn_period):
                 continue
-            contract_number = month_index // 12 + 1
+            contract_number = (period.ordinal - acquired_period.ordinal) // 12 + 1
             retainer = client_base_retainer[client.client_id] * (
                 1.0 + 0.04 * (contract_number - 1)
             )
@@ -125,15 +125,6 @@ def generate_datasets(
             project_fee_revenue_inr=("project_fee_revenue_inr", "sum"),
             active_clients=("client_id", "nunique"),
         )
-    )
-    agency_monthly["new_clients"] = agency_monthly["month"].map(
-        client_month.groupby("month")["client_id"].apply(
-            lambda ids: int(ids.isin(clients.loc[
-                clients["acquisition_date"].dt.to_period("M").eq(
-                    pd.Period(ids.name, freq="M")
-                ), "client_id"
-            ]).sum())
-        ) if False else {}
     )
     # Derive acquisition/churn indicators without using future observations.
     acquisition_months = clients.assign(
