@@ -102,13 +102,18 @@ def generate_datasets(
             if period < acquired_period or (churn_period is not None and period >= churn_period):
                 continue
             contract_number = (period.ordinal - acquired_period.ordinal) // 12 + 1
+            # Contracted retainers must reconcile exactly to contract fees.
             retainer = client_base_retainer[client.client_id] * (
                 1.0 + 0.04 * (contract_number - 1)
             )
+            # Seasonality and noise affect variable project fees, not contracted retainers.
             seasonal = 1.0 + 0.10 * np.sin(2 * np.pi * (period.month - 1) / 12)
-            noise = float(rng.normal(1.0, 0.035))
-            project_fee = float(rng.choice([0, 0, 0, 15000, 30000, 50000]))
-            recognized = max(0.0, retainer * seasonal * noise + project_fee)
+            base_project_fee = float(rng.choice([0, 0, 0, 15000, 30000, 50000]))
+            project_fee = max(
+                0.0,
+                base_project_fee * seasonal * float(rng.normal(1.0, 0.15)),
+            )
+            recognized = retainer + project_fee
             client_month_rows.append({
                 "month": _month_end(period),
                 "client_id": client.client_id,
@@ -153,7 +158,12 @@ def generate_datasets(
         })
         if rng.random() < 0.94:
             delay = int(np.clip(rng.gamma(shape=2.0, scale=12.0), 1, 90))
-            paid_amount = amount * float(rng.uniform(0.85, 1.0))
+            # Model both full and partial collections; 6% of invoices remain unpaid.
+            paid_amount = (
+                amount
+                if rng.random() < 0.65
+                else amount * float(rng.uniform(0.50, 0.95))
+            )
             payment_rows.append({
                 "payment_id": f"PAY-{invoice_id}",
                 "invoice_id": invoice_id,
