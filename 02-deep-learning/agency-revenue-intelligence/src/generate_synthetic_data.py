@@ -117,7 +117,7 @@ def generate_datasets(
             client_month_rows.append({
                 "month": _month_end(period),
                 "client_id": client.client_id,
-                "retainer_revenue_inr": round(retainer * seasonal * noise, 2),
+                "retainer_revenue_inr": round(retainer, 2),
                 "project_fee_revenue_inr": round(project_fee, 2),
                 "recognized_agency_revenue": round(recognized, 2),
                 "synthetic_data": True,
