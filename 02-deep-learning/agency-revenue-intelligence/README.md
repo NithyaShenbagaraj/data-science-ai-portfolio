@@ -1,99 +1,28 @@
 # Agency Revenue Intelligence & Forecasting Platform
 
-A focused, reproducible portfolio project for forecasting a digital marketing agency's financial revenue and its clients' campaign-attributed revenue.
+A focused portfolio project for analyzing and forecasting a digital marketing agency's recognized revenue and its clients' campaign-attributed revenue. All records are synthetic.
 
-> **Current status:** Phase 1 — data engineering and validation. Synthetic candidate datasets have been generated. Campaign economics evaluation and the complete validation suite are still pending; no forecasting model results are claimed.
+> **Implementation status:** Reusable data access, leakage-aware time-series features, baseline/SARIMA/XGBoost/LSTM forecasting code, a Streamlit dashboard, Dockerfile and focused tests are now present. Run the commands below locally before treating model comparisons or dashboard output as validated results. No model-performance claim is made in this README.
 
-## Business objectives
-
-This project has two separate forecasting targets:
+## Business targets
 
 1. **Agency recognized revenue (monthly):** retainer revenue plus project-fee revenue earned by the agency.
-2. **Campaign-attributed revenue (daily):** sales attributed to clients' marketing campaigns.
+2. **Campaign-attributed revenue (daily):** client sales attributed to advertising campaigns.
 
-Campaign-attributed sales are not agency revenue. The two measures must not be combined or double-counted.
+These are distinct measures. Campaign-attributed sales are not agency revenue and must never be combined or double-counted.
 
-## Focused project scope
+## Modeling scope
 
-The project is intentionally limited to five phases:
-
-1. **Data engineering and validation** — generate and validate synthetic agency and campaign data; document assumptions and approve candidate datasets.
-2. **EDA and feature engineering** — analyze agency financial performance and campaign funnels; create leakage-safe time-series features.
-3. **Forecasting models** — compare simple baselines, statistical models, machine learning and a focused deep-learning model.
-4. **Dashboard and explainability** — build a Streamlit dashboard with forecasts, channel performance, SHAP explanations and a simple scenario simulator.
-5. **Finalization** — add Docker, focused automated tests, architecture documentation and reproducible setup instructions.
-
-See [ROADMAP.md](./ROADMAP.md) for phase-level tasks and completion criteria.
-
-## Planned forecasting models
-
-| Forecasting target | Baseline | Statistical / ML | Deep learning |
+| Target | Baseline | Statistical / ML | Deep learning |
 |---|---|---|---|
 | Agency monthly recognized revenue | Seasonal Naive | SARIMA, XGBoost | LSTM |
-| Campaign daily attributed revenue | Naive | XGBoost | LSTM |
+| Campaign daily attributed revenue | 7-day Naive | XGBoost | LSTM |
 
-Models will be evaluated using chronological train/validation/test splits and MAE, RMSE, WAPE and forecast bias. A complex model will not be considered better unless it demonstrates better out-of-sample performance than an appropriate baseline.
-
-## Planned application
-
-A single Streamlit application will present:
-
-- Agency revenue actuals and forecasts.
-- Campaign revenue, funnel metrics and channel-level ROAS.
-- Actual-versus-predicted comparisons.
-- Forecast intervals where supported.
-- SHAP explanations for the XGBoost model.
-- A simple assumption-based scenario simulator.
-
-## Data strategy
-
-All agency-specific client, contract, invoice and payment records are synthetic. Campaign data is also generated synthetically for this project. Synthetic records are labelled and must never be represented as real company financial data.
-
-Original processed datasets are preserved while candidate datasets are being validated. Candidate data is not promoted until the complete validation suite passes.
-
-### Latest candidate dataset snapshot
-
-| Dataset | Rows |
-|---|---:|
-| Clients | 50 |
-| Contracts | 99 |
-| Invoices | 945 |
-| Payments | 891 |
-| Campaigns | 100 |
-| Agency monthly | 36 |
-| Campaign daily | 20,051 |
-
-These counts confirm successful generation only; they do not indicate that the data has passed final approval.
-
-## Repository structure
-
-```text
-agency-revenue-intelligence/
-├── configs/                  # Project and experiment configuration
-├── data/
-│   ├── processed/            # Existing approved datasets; preserve until validation
-│   └── processed_candidate/  # Candidate datasets awaiting validation
-├── notebooks/                # EDA and model experiments
-├── src/                      # Data generation, features, models and evaluation
-├── dashboard/                # Streamlit application (planned)
-├── tests/                    # Data, feature and inference tests
-├── reports/                  # Evaluation reports and figures
-├── models/                   # Local model artifacts; do not commit binaries
-├── ROADMAP.md
-└── README.md
-```
-
-## Deliberately out of scope
-
-To keep the project achievable and portfolio-focused, Kafka/Redpanda, real-time streaming, PostgreSQL, FastAPI, complex production monitoring, separate scheduling infrastructure, extensive CI/CD and multiple additional deep-learning architectures are postponed.
-
-## Evaluation and responsible interpretation
-
-Forecasts are estimates, not guarantees. Scenario outputs depend on explicit assumptions; observational campaign data does not establish causal effects of changing advertising budgets. Financial reporting must distinguish recognized revenue, invoiced amounts, cash collected and client-attributed campaign sales.
+Evaluation uses chronological train/validation/test partitions and MAE, RMSE, WAPE and signed forecast bias. The monthly series has only 36 observations; treat model comparisons as exploratory and do not infer robust annual seasonality from this short history.
 
 ## Local setup
 
-Python 3.11 is the initial target. From the repository root:
+From the repository root:
 
 ```bash
 python -m venv .venv
@@ -102,4 +31,56 @@ python -m pip install --upgrade pip
 pip install -r 02-deep-learning/agency-revenue-intelligence/requirements.txt
 ```
 
-See the project configuration and [ROADMAP.md](./ROADMAP.md) for the current implementation sequence.
+Generate synthetic data into a candidate directory. This does not overwrite the original processed directory:
+
+```bash
+python 02-deep-learning/agency-revenue-intelligence/src/generate_synthetic_data.py \
+  --output-dir 02-deep-learning/agency-revenue-intelligence/data/processed_candidate
+```
+
+Run the project tests from the project directory:
+
+```bash
+cd 02-deep-learning/agency-revenue-intelligence
+python -m pytest -q
+```
+
+Run the forecasting comparison from the project directory:
+
+```bash
+python -m src.train_forecasts
+```
+
+The pipeline writes validation metrics, held-out test metrics and test predictions to `reports/generated/`. Model artifacts are local and ignored by Git.
+
+Launch the dashboard from the project directory:
+
+```bash
+streamlit run dashboard/app.py
+```
+
+The dashboard expects the generated Parquet datasets and, for its evaluation tab, the forecast outputs created by the training command.
+
+## Docker
+
+From the repository root, after generating data locally:
+
+```bash
+docker build -f 02-deep-learning/agency-revenue-intelligence/Dockerfile -t agency-revenue-intelligence .
+docker run --rm -p 8501:8501 \
+  -v "$(pwd)/02-deep-learning/agency-revenue-intelligence/data:/app/data" \
+  -v "$(pwd)/02-deep-learning/agency-revenue-intelligence/reports:/app/reports" \
+  agency-revenue-intelligence
+```
+
+Open `http://localhost:8501`.
+
+## Data and responsible interpretation
+
+- All client, contract, invoice, payment and campaign records are synthetic.
+- `recognized_agency_revenue` is not the same as invoice value or cash collected.
+- ROAS = campaign-attributed revenue / advertising spend. ROAS is not profit.
+- Scenario outputs use a fixed historical blended ROAS and are illustrative arithmetic, not causal budget-response forecasts.
+- Do not commit credentials, private data, Parquet datasets, or generated model binaries.
+
+See [ROADMAP.md](./ROADMAP.md) and [docs/data_dictionary.md](./docs/data_dictionary.md) for scope, metric definitions and completion criteria.

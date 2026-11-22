@@ -1,116 +1,68 @@
 # Project 3 Roadmap — Focused Portfolio Scope
 
 **Project:** Agency Revenue Intelligence & Forecasting Platform  
-**Branch:** `feature/agency-revenue-intelligence`  
-**Status:** Phase 1 — data engineering and validation  
-**Estimated effort:** 17–24 days at 2–3 hours per day
+**Branch:** `feature/agency-revenue-intelligence`
 
-## Project objective
+## Objective
 
-Build a reproducible portfolio project that forecasts two distinct business outcomes:
+Forecast two distinct business outcomes: monthly agency recognized revenue and daily client campaign-attributed revenue. Campaign sales are not agency revenue.
 
-1. **Agency recognized revenue** — monthly retainer revenue plus project-fee revenue earned by the agency.
-2. **Campaign-attributed revenue** — daily sales attributed to clients' marketing campaigns.
+## Phase 1 — Data engineering and validation
 
-These targets must remain separate. Campaign-attributed sales are not agency revenue.
+- [x] Synthetic data generator and seven Parquet dataset outputs.
+- [x] Candidate dataset generation performed locally.
+- [x] Local structural/business-rule validation suite reported 16 passing tests.
+- [x] Channel-level campaign funnel assumptions and ROAS diagnostics completed locally.
+- [ ] Synchronize the latest locally refined generator and configuration to GitHub.
+- [ ] Re-run the complete validation suite against the exact synchronized generator output.
+- [ ] Approve and promote candidate data only after that run; preserve original processed data.
+- [ ] Document final generator assumptions and limitations.
 
-## Scope and deliverables
+**Important:** The GitHub branch's generator is not yet the same as the locally refined generator. Do not treat remote generation as equivalent until the local refinements are synchronized and validated.
 
-### Phase 1 — Data engineering and validation (in progress)
+## Phase 2 — EDA and feature engineering
 
-- [x] Synthetic data generator for clients, contracts, invoices, payments, campaigns, agency-monthly metrics and campaign-daily metrics.
-- [x] Candidate dataset generation in `data/processed_candidate/`.
-- [x] Acquisition timing, churn eligibility, campaign timing and complete 36-month agency series refinements.
-- [x] Separate channel-level click-to-lead, lead-to-customer and average-order-value assumptions in the campaign generator.
-- [ ] Evaluate campaign ROAS and funnel conversion rates.
-- [ ] Run the complete data-quality validation suite against the latest candidate datasets.
-- [ ] Approve candidate data and promote it to `data/processed/`.
-- [ ] Document synthetic-data assumptions and limitations.
+- [x] Agency monthly EDA notebook started locally; initial data-quality, descriptive-statistics and revenue-trend sections completed locally.
+- [x] Reusable lag, rolling and calendar feature functions added.
+- [ ] Finish and commit the local agency EDA notebook after synchronization review.
+- [ ] Complete campaign EDA: funnel, channel spend, revenue, conversion rates and ROAS.
+- [ ] Review leakage and feature availability for both targets.
 
-**Data safety:** Keep original processed datasets unchanged until candidate validation passes. Synthetic records must remain clearly labelled. Do not commit credentials, private client data, or generated datasets unless explicitly intended.
+Features use prior observations for lag and rolling calculations. Campaign partitions are split by unique date so records from the same date cannot leak across partitions.
 
-### Phase 2 — EDA and feature engineering
+## Phase 3 — Forecasting models
 
-Deliver two focused notebooks:
+- [x] Seasonal Naive and 7-day Naive baselines.
+- [x] SARIMA monthly forecasting implementation.
+- [x] XGBoost recursive forecasting implementation for both targets.
+- [x] PyTorch LSTM recursive forecasting implementation for both targets.
+- [x] Chronological validation selection and held-out test evaluation pipeline.
+- [ ] Run the pipeline locally and inspect failures/metrics.
+- [ ] Add SHAP explanations for the selected XGBoost model where available.
+- [ ] Record validated model comparison results; do not assume LSTM/XGBoost outperforms baselines.
 
-- Agency financial performance: revenue trends, retainers, project fees, client activity, acquisition, churn and seasonality.
-- Campaign performance: spend, impressions, clicks, leads, conversions, attributed revenue, channel performance and ROAS.
+Metrics: MAE, RMSE, WAPE and signed forecast bias.
 
-Build reusable, leakage-safe features including calendar features, lags, rolling statistics and relevant business drivers. Use chronological splits; never use future information to construct training features.
+## Phase 4 — Dashboard and explainability
 
-### Phase 3 — Forecasting models
+- [x] Streamlit dashboard for agency revenue, client activity, campaign performance and channel ROAS.
+- [x] Clearly labelled illustrative fixed-ROAS scenario calculator.
+- [x] Test metrics and actual-vs-predicted results view.
+- [ ] Run dashboard locally against generated data and review charts.
+- [ ] Add and validate SHAP feature explanations for XGBoost.
+- [ ] Capture representative screenshots after local verification.
 
-**Agency monthly recognized revenue**
-- Seasonal Naive baseline
-- SARIMA
-- XGBoost
-- LSTM
+Scenario output is arithmetic under a fixed historical ROAS assumption; it is not a causal estimate of incremental budget return.
 
-**Campaign daily attributed revenue**
-- Naive baseline
-- XGBoost
-- LSTM
+## Phase 5 — Finalization
 
-Compare models using chronological train/validation/test splits. Tune only where justified by validation results. Report MAE, RMSE, WAPE and forecast bias. Do not assume a deep-learning model is superior to a simpler baseline.
-
-### Phase 4 — Dashboard and explainability
-
-Build one Streamlit application that presents:
-
-- Agency revenue actuals and forecasts.
-- Campaign revenue and channel-level ROAS.
-- Actual-versus-predicted comparisons.
-- Forecast intervals where supported by the selected model.
-- XGBoost feature explanations using SHAP.
-- One simple assumption-based scenario simulator.
-
-Clearly label forecasts and scenarios as estimates, not guarantees. Do not imply that observational campaign data proves causal effects of budget changes.
-
-### Phase 5 — Finalization
-
-- Dockerize the application.
-- Add focused automated tests for data validation, feature generation and inference.
-- Add a project README, data dictionary and architecture diagram.
-- Include reproducible setup/run instructions and representative screenshots.
-- Record model comparison results and project limitations.
+- [x] Dockerfile and reproducible setup/run instructions.
+- [x] Data dictionary and focused feature tests.
+- [ ] Run the complete test suite after pulling all changes.
+- [ ] Build and launch the Docker image locally.
+- [ ] Review README, assumptions, results and limitations.
+- [ ] Commit the completed EDA notebooks and verified evaluation report.
 
 ## Deliberately out of scope
 
-To keep the project achievable and focused, the following are postponed or excluded:
-
-- Kafka / Redpanda and real-time event streaming.
-- PostgreSQL and database migrations.
-- FastAPI model-serving layer.
-- Complex production monitoring and alerting.
-- Separate production scheduling infrastructure.
-- Extensive CI/CD and cloud deployment.
-- Multiple competing deep-learning architectures such as GRU, TCN and Transformer.
-- Extensive multi-variable scenario simulation.
-
-These can be added later only if they solve a demonstrated need.
-
-## Current dataset snapshot
-
-Latest candidate generation reported:
-
-| Dataset | Rows |
-|---|---:|
-| Clients | 50 |
-| Contracts | 99 |
-| Invoices | 945 |
-| Payments | 891 |
-| Campaigns | 100 |
-| Agency monthly | 36 |
-| Campaign daily | 20,051 |
-
-These row counts confirm generation only; they do **not** constitute final data approval. Campaign economics and the full validation suite are still pending.
-
-## Completion criteria
-
-The project is complete when:
-
-1. Candidate data passes documented integrity and business-rule checks.
-2. Both forecasting targets have a baseline and model comparison using chronological evaluation.
-3. The Streamlit dashboard loads validated model artifacts and displays forecasts accurately.
-4. Tests and Docker setup work from documented instructions.
-5. README, assumptions, evaluation results and limitations are documented.
+Kafka/Redpanda, real-time streaming, PostgreSQL, FastAPI, complex monitoring, separate scheduling infrastructure, extensive CI/CD/cloud deployment, additional deep-learning architectures and a large scenario simulator remain postponed.
