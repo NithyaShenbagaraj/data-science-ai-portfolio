@@ -44,11 +44,25 @@ def generate_datasets(
     start_day = daily_dates[0]
 
     # Client master data.
+    # Distribute acquisitions across the full 36-month history.
     client_rows = []
+    acquisition_weights = np.linspace(1.8, 0.8, len(month_periods))
+    acquisition_weights = acquisition_weights / acquisition_weights.sum()
+
+    acquisition_month_indices = rng.choice(
+        len(month_periods),
+        size=n_clients,
+        replace=True,
+        p=acquisition_weights,
+    )
+
     for i in range(n_clients):
-        acquired = first_month.to_timestamp() + pd.Timedelta(
-            days=int(rng.integers(0, 180))
+        acquisition_month = month_periods[acquisition_month_indices[i]]
+
+        acquired = acquisition_month.to_timestamp() + pd.Timedelta(
+            days=int(rng.integers(0, acquisition_month.days_in_month))
         )
+
         client_rows.append({
             "client_id": f"CL{i + 1:04d}",
             "industry": str(rng.choice(INDUSTRIES)),
@@ -56,6 +70,7 @@ def generate_datasets(
             "monthly_retainer_inr": round(float(rng.uniform(45000, 250000)), 2),
             "synthetic_data": True,
         })
+
     clients = pd.DataFrame(client_rows)
 
     # Contracts: annual terms with renewal rows. Some clients eventually churn.
@@ -64,10 +79,19 @@ def generate_datasets(
     client_base_retainer: dict[str, float] = {}
     for row in clients.itertuples(index=False):
         churn_period = None
-        if rng.random() < 0.22:
-            possible = month_periods[int(rng.integers(18, 35)):]
-            if len(possible):
-                churn_period = possible[0]
+        acquired_period = pd.Timestamp(row.acquisition_date).to_period("M")
+
+        # A client must remain active for at least 12 months
+        # before becoming eligible for churn.
+        earliest_churn_period = acquired_period + 12
+
+        possible_churn_periods = month_periods[
+            month_periods >= earliest_churn_period
+        ]
+
+        if len(possible_churn_periods) > 0 and rng.random() < 0.22:
+            churn_index = int(rng.integers(0, len(possible_churn_periods)))
+            churn_period = possible_churn_periods[churn_index]
         client_churn_month[row.client_id] = churn_period
         base = float(row.monthly_retainer_inr)
         client_base_retainer[row.client_id] = base
@@ -128,15 +152,23 @@ def generate_datasets(
             })
     client_month = pd.DataFrame(client_month_rows)
 
+
     agency_monthly = (
-        client_month.groupby("month", as_index=False)
+        client_month.groupby("month")
         .agg(
             recognized_agency_revenue=("recognized_agency_revenue", "sum"),
             retainer_revenue_inr=("retainer_revenue_inr", "sum"),
             project_fee_revenue_inr=("project_fee_revenue_inr", "sum"),
             active_clients=("client_id", "nunique"),
         )
+        .reindex(
+            [_month_end(period) for period in month_periods],
+            fill_value=0,
+        )
+        .rename_axis("month")
+        .reset_index()
     )
+
     # Derive acquisition/churn indicators without using future observations.
     acquisition_months = clients.assign(
         month=clients["acquisition_date"].dt.to_period("M").dt.to_timestamp(how="end").dt.normalize()
@@ -183,11 +215,24 @@ def generate_datasets(
     daily_rows = []
     campaign_count = n_clients * campaigns_per_client
     for campaign_index in range(campaign_count):
-        client_id = f"CL{int(rng.integers(1, n_clients + 1)):04d}"
+        client = clients.iloc[int(rng.integers(0, len(clients)))]
+        client_id = client["client_id"]
+
         channel = str(rng.choice(CHANNELS))
-        campaign_start = start_day + pd.Timedelta(
-            days=int(rng.integers(0, max(1, len(daily_dates) - 120)))
-        )
+
+        earliest_start = max(
+            start_day,
+            pd.Timestamp(client["acquisition_date"])
+    )
+
+        available_days = max(
+            1,
+            (end - earliest_start).days - 119
+    )
+
+        campaign_start = earliest_start + pd.Timedelta(
+            days=int(rng.integers(0, available_days))
+    )
         duration = int(rng.integers(90, 366))
         campaign_end = min(campaign_start + pd.Timedelta(days=duration - 1), end)
         daily_budget = float(rng.uniform(800, 12000))
@@ -206,14 +251,37 @@ def generate_datasets(
             "search": 0.035, "social": 0.018, "display": 0.009,
             "video": 0.012, "email": 0.045, "affiliate": 0.025,
         }[channel]
-        channel_conversion = {
-            "search": 0.045, "social": 0.025, "display": 0.012,
-            "video": 0.018, "email": 0.055, "affiliate": 0.035,
-        }[channel]
+        channel_click_to_lead = {
+            "search": 0.080,
+            "social": 0.035,
+            "display": 0.015,
+            "video": 0.020,
+            "email": 0.100,
+            "affiliate": 0.055,
+        }
+
+        channel_lead_to_customer = {
+            "search": 0.120,
+            "social": 0.080,
+            "display": 0.050,
+            "video": 0.060,
+            "email": 0.140,
+            "affiliate": 0.100,
+        }
+
+        channel_aov = {
+            "search": 4500,
+            "social": 3200,
+            "display": 2800,
+            "video": 3000,
+            "email": 4000,
+            "affiliate": 3500,
+        }
         active_dates = daily_dates[
             (daily_dates >= campaign_start) & (daily_dates <= campaign_end)
         ]
         campaign_scale = float(rng.lognormal(mean=0.0, sigma=0.18))
+        campaign_quality = float(rng.lognormal(mean=0.0, sigma=0.18))
         for day in active_dates:
             weekday_factor = 0.82 if day.dayofweek >= 5 else 1.0
             seasonal_factor = 1.0 + 0.12 * np.sin(2 * np.pi * (day.dayofyear - 1) / 365.25)
@@ -222,11 +290,39 @@ def generate_datasets(
             clicks = int(max(0, rng.poisson(spend / cpc)))
             ctr = max(0.001, channel_ctr * float(rng.lognormal(0, 0.12)))
             impressions = int(max(clicks, clicks / ctr)) if clicks else 0
-            leads = int(rng.binomial(clicks, min(channel_conversion * 1.8, 0.5)))
-            conversions = int(rng.binomial(leads, min(channel_conversion * 0.65, 0.8))) if leads else 0
-            average_order_value = float(rng.uniform(900, 6500))
+            daily_quality = float(rng.lognormal(mean=0.0, sigma=0.08))
+
+            click_to_lead_probability = min(
+                channel_click_to_lead[channel]
+                * campaign_quality
+                * daily_quality,
+                0.95,
+            )
+
+            lead_to_customer_probability = min(
+                channel_lead_to_customer[channel]
+                * campaign_quality
+                * daily_quality,
+                0.95,
+            )
+
+            leads = int(rng.binomial(clicks, click_to_lead_probability))
+
+            conversions = (
+                int(rng.binomial(leads, lead_to_customer_probability))
+                if leads else 0
+            )
+
+            average_order_value = (
+                channel_aov[channel]
+                * float(rng.lognormal(mean=0.0, sigma=0.12))
+            )
+
             attributed_revenue = (
-                conversions * average_order_value * campaign_scale * seasonal_factor
+                conversions
+                * average_order_value
+                * campaign_scale
+                * seasonal_factor
             )
             daily_rows.append({
                 "date": day,
