@@ -104,6 +104,9 @@ def lstm_recursive_forecast(history, horizon, lookback=12, epochs=60):
     from torch import nn
     from sklearn.preprocessing import MinMaxScaler
 
+    # Avoid native threading conflicts in the macOS CPU environment.
+    torch.set_num_threads(1)
+
     values = np.asarray(history, dtype=np.float32).reshape(-1, 1)
     if len(values) <= lookback:
         raise ValueError("History must be longer than LSTM lookback")
