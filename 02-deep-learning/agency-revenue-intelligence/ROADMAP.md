@@ -44,7 +44,7 @@ Campaign-attributed sales are not agency revenue and must not be combined with i
 - [x] Full forecasting pipeline executed successfully on candidate datasets.
 - [x] Validation and held-out test metrics generated and reviewed.
 - [x] Mean 90 daily benchmark added and evaluated using validation WAPE.
-- [ ] Add SHAP explanations for XGBoost where appropriate.
+- [x] Implement leakage-safe SHAP explanations for a dedicated XGBoost model.
 - [ ] Investigate daily campaign forecasting error and improve generalization.
 
 **Selected models based on validation WAPE:**
@@ -64,8 +64,8 @@ Campaign-attributed sales are not agency revenue and must not be combined with i
 - [x] Illustrative fixed-ROAS scenario calculator.
 - [x] Validation model comparison and held-out test metrics view.
 - [x] Actual-versus-predicted visualizations.
-- [x] Dashboard launched locally and its main sections reviewed.
-- [ ] Add and validate SHAP feature explanations for XGBoost.
+- [x] Dashboard launched locally and all four sections reviewed, including SHAP visualizations.
+- [x] Add and validate global and individual-observation SHAP explanations in the dashboard.
 - [ ] Capture representative dashboard screenshots.
 
 **Scenario limitation:** Scenario outputs use historical blended ROAS as a fixed arithmetic assumption. They are not causal estimates of incremental advertising revenue.
@@ -75,10 +75,10 @@ Campaign-attributed sales are not agency revenue and must not be combined with i
 - [x] Dockerfile and setup/run instructions added.
 - [x] Data dictionary created.
 - [x] Focused data validation, feature and forecasting tests implemented.
-- [x] Complete local test suite executed successfully: 29 passed.
+- [x] Complete local test suite executed successfully: 35 passed.
 - [x] Forecast evaluation CSV artifacts generated.
 - [x] README updated with setup instructions, methodology, evaluation results and limitations.
-- [ ] Build and launch the Docker image locally.
+- [x] Build the Docker image and verify all dashboard tabs and interactions locally in the container.
 - [ ] Complete final documentation and reproducibility review.
 - [x] Commit the completed EDA notebooks.
 

@@ -1,0 +1,17 @@
+feature,mean_abs_shap
+rolling_mean_7,47701.05
+lag_14,14282.19
+rolling_mean_3,12291.639
+day_of_week,8265.3955
+lag_28,6020.5366
+day_of_year,4803.173
+rolling_std_3,3910.051
+lag_7,3489.2449
+lag_1,3085.0981
+rolling_std_7,2691.0503
+dow_sin,2275.5818
+month_cos,1163.297
+month,1149.3502
+month_sin,560.46124
+dow_cos,297.60925
+quarter,55.25357

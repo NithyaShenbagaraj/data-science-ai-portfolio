@@ -80,11 +80,14 @@ These results are specific to the synthetic datasets and evaluation period. They
 
 ## Streamlit dashboard
 
-The dashboard includes three main sections:
+The dashboard includes four main sections:
 
 1. **Agency revenue:** Monthly revenue composition, retainer revenue, project fees, and client activity.
 2. **Campaign performance:** Daily campaign spend and attributed revenue, channel-level ROAS, and conversion funnel metrics.
 3. **Forecast evaluation:** Validation model comparison, held-out test metrics, and actual-versus-predicted visualizations.
+4. **Model explainability:** Global SHAP feature importance, a SHAP summary plot, and date-selectable explanations for individual historical observations.
+
+A dedicated XGBoost model is used for SHAP explanations. It is not the selected daily forecasting model: the 7-day Naive baseline achieved better validation WAPE. Explanations use historical one-step-ahead feature rows through 2026-07-13; the held-out test period is excluded. SHAP contributions describe model behavior, not causal effects.
 
 An illustrative campaign budget scenario calculator uses historical blended ROAS. It is an arithmetic scenario, not a causal estimate of incremental revenue.
 
@@ -127,7 +130,7 @@ cd 02-deep-learning/agency-revenue-intelligence
 python -m pytest -q
 ```
 
-The current local test run completed with **29 passing tests**.
+The current local test run completed with **35 passing tests**.
 
 ### 6. Run the forecasting pipeline
 
@@ -170,13 +173,16 @@ agency-revenue-intelligence/
 │   └── data_dictionary.md
 ├── models/
 ├── notebooks/
-│   └── 01_agency_revenue_eda.ipynb
+│   ├── 01_agency_revenue_eda.ipynb
+│   └── 02_campaign_revenue_eda.ipynb
 ├── reports/
+│   ├── explainability/
 │   └── forecast_results/
 ├── src/
 │   ├── data_access.py
 │   ├── explainability.py
 │   ├── features.py
+│   ├── generate_explanations.py
 │   ├── forecasting.py
 │   ├── generate_synthetic_data.py
 │   ├── metrics.py
@@ -205,7 +211,7 @@ See [docs/data_dictionary.md](docs/data_dictionary.md) for dataset fields and me
 - Daily campaign forecasts currently have relatively high test error.
 - Synthetic data may not reflect real agency revenue patterns or advertising behavior.
 - Historical ROAS does not establish causal advertising effectiveness.
-- SHAP explanations and Docker execution require further validation.
+- SHAP explainability has been implemented and reviewed locally; Docker build and execution remain to be validated.
 
 See [ROADMAP.md](ROADMAP.md) for the implementation status and remaining work.
 
