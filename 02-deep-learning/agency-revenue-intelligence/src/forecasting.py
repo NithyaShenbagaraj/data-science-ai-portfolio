@@ -37,6 +37,16 @@ def naive_forecast(history, horizon: int, lag: int = 7):
         return np.repeat(values[-1], horizon)
     return np.resize(values[-lag:], horizon)
 
+def mean_forecast(history, horizon: int, window: int = 90):
+    """Forecast using the mean of the most recent observations."""
+    values = np.asarray(history, dtype=float)
+
+    if len(values) == 0 or horizon < 1:
+        raise ValueError("History and horizon must be non-empty/positive")
+
+    recent_mean = values[-min(window, len(values)):].mean()
+
+    return np.full(horizon, recent_mean)
 
 def sarima_forecast(history, horizon: int, order=(1, 1, 1)):
     values = np.asarray(history, dtype=float)

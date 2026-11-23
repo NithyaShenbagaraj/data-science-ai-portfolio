@@ -55,6 +55,7 @@ The pipeline was executed successfully using the locally generated candidate dat
 | Monthly agency revenue | XGBoost | 33.07% |
 | Monthly agency revenue | LSTM | 28.52% |
 | Daily campaign revenue | 7-day Naive | 42.61% |
+| Daily campaign revenue | Mean 90 | 44.52% |
 | Daily campaign revenue | XGBoost | 48.85% |
 | Daily campaign revenue | LSTM | 57.93% |
 
@@ -68,7 +69,8 @@ The pipeline was executed successfully using the locally generated candidate dat
 **Interpretation:**
 
 - SARIMA achieved the best validation performance for monthly agency revenue, but its WAPE increased from 5.94% on validation to 16.45% on the held-out test period.
-- The 7-day Naive baseline was the best validation model for daily campaign revenue.
+- The 7-day Naive baseline was the best validation model for daily campaign revenue (42.61% WAPE).
+- The Mean 90 baseline was added as an additional benchmark (44.52% validation WAPE) but was not selected because its validation performance was weaker.
 - Daily campaign forecasting performance deteriorated on the held-out test period. This indicates limited generalization and is an area for further improvement.
 - XGBoost and LSTM did not outperform the selected baselines in these experiments.
 
@@ -125,7 +127,7 @@ cd 02-deep-learning/agency-revenue-intelligence
 python -m pytest -q
 ```
 
-The current local test run completed with **26 passing tests**.
+The current local test run completed with **29 passing tests**.
 
 ### 6. Run the forecasting pipeline
 

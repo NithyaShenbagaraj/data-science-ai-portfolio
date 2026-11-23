@@ -16,7 +16,7 @@ Campaign-attributed sales are not agency revenue and must not be combined with i
 
 - [x] Synthetic data generator and seven Parquet dataset outputs.
 - [x] Candidate dataset generated locally.
-- [x] Structural and business-rule validation suite: 26 passing tests.
+- [x] Structural and business-rule validation suite implemented.
 - [x] Channel-level campaign funnel assumptions and ROAS diagnostics.
 - [ ] Verify that the latest locally refined generator and configuration are synchronized with GitHub.
 - [ ] Revalidate the exact synchronized generator output.
@@ -36,13 +36,14 @@ Campaign-attributed sales are not agency revenue and must not be combined with i
 
 ## Phase 3 — Forecasting models
 
-- [x] Seasonal Naive and 7-day Naive baselines.
+- [x] Seasonal Naive, 7-day Naive and Mean 90 baselines.
 - [x] SARIMA monthly forecasting implementation.
 - [x] XGBoost recursive forecasting for both targets.
 - [x] PyTorch LSTM recursive forecasting for both targets.
 - [x] Chronological train, validation and held-out test pipeline.
 - [x] Full forecasting pipeline executed successfully on candidate datasets.
 - [x] Validation and held-out test metrics generated and reviewed.
+- [x] Mean 90 daily benchmark added and evaluated using validation WAPE.
 - [ ] Add SHAP explanations for XGBoost where appropriate.
 - [ ] Investigate daily campaign forecasting error and improve generalization.
 
@@ -74,7 +75,7 @@ Campaign-attributed sales are not agency revenue and must not be combined with i
 - [x] Dockerfile and setup/run instructions added.
 - [x] Data dictionary created.
 - [x] Focused data validation, feature and forecasting tests implemented.
-- [x] Complete local test suite executed successfully: 26 passed.
+- [x] Complete local test suite executed successfully: 29 passed.
 - [x] Forecast evaluation CSV artifacts generated.
 - [x] README updated with setup instructions, methodology, evaluation results and limitations.
 - [ ] Build and launch the Docker image locally.

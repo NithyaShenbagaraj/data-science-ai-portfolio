@@ -10,8 +10,8 @@ import pandas as pd
 from src.data_access import load_forecasting_targets, resolve_data_dir
 from src.features import split_by_time
 from src.forecasting import (
-    metric_row, seasonal_naive, naive_forecast, sarima_forecast,
-    xgb_recursive_forecast, lstm_recursive_forecast,
+    metric_row, seasonal_naive, naive_forecast, mean_forecast,
+    sarima_forecast, xgb_recursive_forecast, lstm_recursive_forecast,
 )
 
 
@@ -42,6 +42,12 @@ def evaluate_series(frame, date_col, target_col, frequency, output_dir):
     val_dates = validation[date_col]
     candidates = {}
     candidates["seasonal_naive" if frequency == "monthly" else "naive"] = baseline(val_history, len(validation))
+    if frequency == "daily":
+        candidates["mean_90"] = mean_forecast(
+            val_history,
+            len(validation),
+            window=90,
+        )
     if frequency == "monthly":
         try:
             candidates["sarima"] = sarima_forecast(val_history, len(validation))
@@ -68,6 +74,12 @@ def evaluate_series(frame, date_col, target_col, frequency, output_dir):
     history_values = history[target_col].to_numpy(dtype=float)
     if selected in ("seasonal_naive", "naive"):
         test_pred = baseline(history_values, len(test))
+    elif selected == "mean_90":
+        test_pred = mean_forecast(
+            history_values,
+            len(test),
+            window=90,
+        )
     elif selected == "sarima":
         test_pred = sarima_forecast(history_values, len(test))
     elif selected == "xgboost":
