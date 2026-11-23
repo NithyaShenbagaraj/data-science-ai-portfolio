@@ -27,11 +27,10 @@ Campaign-attributed sales are not agency revenue and must not be combined with i
 
 ## Phase 2 — EDA and feature engineering
 
-- [x] Agency monthly EDA notebook started; initial data-quality, descriptive-statistics and revenue-trend sections completed locally.
+- [x] Agency monthly EDA notebook completed, executed, reviewed and committed.
 - [x] Reusable lag, rolling and calendar feature functions implemented.
-- [ ] Complete agency revenue EDA notebook and commit the verified notebook.
-- [ ] Complete campaign EDA: funnel, channel spend, attributed revenue, conversion rates and ROAS.
-- [ ] Review feature availability and leakage safeguards for both forecasting targets.
+- [x] Complete campaign EDA: funnel, channel spend, attributed revenue, conversion rates and ROAS.
+- [x] Review feature availability and leakage safeguards for both forecasting targets.
 
 **Feature engineering:** Lag and rolling features use prior observations. Campaign forecasting uses chronological partitions based on calendar dates.
 
@@ -80,7 +79,7 @@ Campaign-attributed sales are not agency revenue and must not be combined with i
 - [x] README updated with setup instructions, methodology, evaluation results and limitations.
 - [ ] Build and launch the Docker image locally.
 - [ ] Complete final documentation and reproducibility review.
-- [ ] Commit the completed EDA notebook and any remaining verified project artifacts.
+- [x] Commit the completed EDA notebooks.
 
 ## Deliberately out of scope
 
