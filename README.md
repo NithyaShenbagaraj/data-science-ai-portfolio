@@ -4,7 +4,7 @@
 
 I am a Data Analyst with 4+ years of experience in data analytics, business intelligence, SQL, Python, Tableau, and Power BI. I build data-driven solutions and am expanding my work into applied machine learning, deep learning, NLP, and AI engineering.
 
-This repository is my hands-on portfolio. It is organized around seven end-to-end projects, progressing from predictive modelling to LLM-powered applications. Project status is stated transparently; planned work is not presented as completed experience.
+This repository is my hands-on portfolio. It is organized around eight end-to-end projects, progressing from predictive modelling to LLM-powered applications. Project status is stated transparently; planned work is not presented as completed experience.
 
 ---
 
@@ -37,12 +37,13 @@ This repository is my hands-on portfolio. It is organized around seven end-to-en
 | # | Project | Demonstrates | Status |
 |---:|---|---|---|
 | 1 | [Healthcare Risk Prediction](./01-machine-learning/healthcare-risk-prediction/) | End-to-end ML, XGBoost, SHAP, evaluation | In progress |
-| 2 | Customer Churn Prediction | Classification, feature engineering, explainability | Planned |
-| 3 | Deep Learning Lab | CNN, PyTorch, neural network training | Planned |
-| 4 | NLP & Transformer Applications | Text classification, embeddings, fine-tuning | Planned |
-| 5 | Healthcare Research RAG | Document processing, vector search, LLMs | Planned |
-| 6 | Healthcare AI Agent | LangGraph, tool calling, multi-step workflows | Planned |
-| 7 | AI-Powered Analytics Assistant | SQL generation, data analysis, LLM integration | Planned |
+| 2 | [Customer Retention & Revenue Intelligence](https://github.com/NithyaShenbagaraj/data-science-ai-portfolio/tree/feature/customer-churn-prediction/01-machine-learning/customer-retention-revenue-intelligence) | Customer analytics, temporal validation, repeat-purchase modelling, SHAP | Core workflow complete |
+| 3 | [Agency Revenue Intelligence & Forecasting Platform](./02-deep-learning/agency-revenue-intelligence/) | Time-series forecasting, XGBoost, LSTM, SHAP, Streamlit, Docker | Completed |
+| 4 | Deep Learning Lab | CNN, PyTorch, neural network training | Planned |
+| 5 | NLP & Transformer Applications | Text classification, embeddings, fine-tuning | Planned |
+| 6 | Healthcare Research RAG | Document processing, vector search, LLMs | Planned |
+| 7 | Healthcare AI Agent | LangGraph, tool calling, multi-step workflows | Planned |
+| 8 | AI-Powered Analytics Assistant | SQL generation, data analysis, LLM integration | Planned |
 
 ### 1. Healthcare Risk Prediction
 
@@ -52,6 +53,22 @@ An educational binary classification project using the public UCI Heart Disease 
 - [UCI Heart Disease dataset](https://archive.ics.uci.edu/dataset/45/heart+disease)
 
 **Responsible-use note:** This is a learning and research project, not a clinically validated diagnostic or screening tool. It must not be used for patient care or medical decisions.
+
+
+### 3. Agency Revenue Intelligence & Forecasting Platform
+
+An end-to-end forecasting and analytics platform built with reproducible synthetic agency and campaign data. It forecasts monthly agency recognized revenue and daily campaign-attributed revenue, compares statistical, machine-learning and deep-learning models, and provides an interactive Streamlit dashboard.
+
+- Monthly agency revenue: Seasonal Naive, SARIMA, XGBoost and LSTM.
+- Daily campaign revenue: 7-day Naive, Mean90, XGBoost and LSTM.
+- Forecast evaluation with MAE, RMSE, WAPE and signed bias.
+- Global and observation-level SHAP explanations for model interpretability.
+- Interactive scenario simulator and Dockerized dashboard.
+- Full test suite: 35 tests passed.
+
+- [Open project documentation and source code](./02-deep-learning/agency-revenue-intelligence/)
+
+**Data note:** All project datasets are synthetic and intended for educational portfolio use. Model results are not production forecasts or causal estimates.
 
 ## Portfolio website
 
@@ -84,6 +101,13 @@ A responsive personal portfolio website is available from the repository root:
 │       ├── models/
 │       ├── reports/
 │       ├── requirements.txt
+│       └── README.md
+├── 02-deep-learning/
+│   └── agency-revenue-intelligence/
+│       ├── dashboard/
+│       ├── src/
+│       ├── tests/
+│       ├── docs/
 │       └── README.md
 ├── index.html
 └── README.md
