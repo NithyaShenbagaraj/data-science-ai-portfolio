@@ -18,10 +18,10 @@ Campaign-attributed sales are not agency revenue and must not be combined with i
 - [x] Candidate dataset generated locally.
 - [x] Structural and business-rule validation suite implemented.
 - [x] Channel-level campaign funnel assumptions and ROAS diagnostics.
-- [ ] Verify that the latest locally refined generator and configuration are synchronized with GitHub.
-- [ ] Revalidate the exact synchronized generator output.
-- [ ] Approve and promote candidate data only after validation; preserve original processed data.
-- [ ] Document final generator assumptions and limitations.
+- [x] Verify that the generator and project configuration are synchronized with GitHub.
+- [x] Revalidate the exact synchronized generator output; all 16 data-validation tests passed.
+- [x] Approve `processed_candidate` as the canonical working dataset; preserve original `processed` data unchanged.
+- [x] Document generator defaults, synthetic assumptions, data provenance and limitations.
 
 **Data safeguard:** Candidate data is kept separate from the original processed dataset. Do not overwrite the original data during validation or promotion.
 
@@ -66,7 +66,7 @@ Campaign-attributed sales are not agency revenue and must not be combined with i
 - [x] Actual-versus-predicted visualizations.
 - [x] Dashboard launched locally and all four sections reviewed, including SHAP visualizations.
 - [x] Add and validate global and individual-observation SHAP explanations in the dashboard.
-- [ ] Capture representative dashboard screenshots.
+- [x] Defer optional dashboard screenshots; dashboard functionality verified locally and in Docker.
 
 **Scenario limitation:** Scenario outputs use historical blended ROAS as a fixed arithmetic assumption. They are not causal estimates of incremental advertising revenue.
 
@@ -79,7 +79,7 @@ Campaign-attributed sales are not agency revenue and must not be combined with i
 - [x] Forecast evaluation CSV artifacts generated.
 - [x] README updated with setup instructions, methodology, evaluation results and limitations.
 - [x] Build the Docker image and verify all dashboard tabs and interactions locally in the container.
-- [ ] Complete final documentation and reproducibility review.
+- [x] Complete final documentation and reproducibility review.
 - [x] Commit the completed EDA notebooks.
 
 ## Deliberately out of scope

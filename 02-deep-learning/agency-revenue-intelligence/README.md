@@ -11,6 +11,38 @@ The platform analyzes two distinct business targets:
 
 These measures represent different business outcomes. Campaign-attributed sales are not agency revenue and must not be combined or double-counted.
 
+## Data generation and provenance
+
+All seven datasets are generated synthetic records. The generator defaults are:
+
+| Parameter | Value |
+|---|---|
+| Random seed | 42 |
+| Clients | 50 |
+| Campaigns per client | 2 |
+| Total campaigns | 100 |
+| Agency monthly history | November 2023–October 2026 (36 months) |
+| Campaign daily history | 730 calendar days through October 31, 2026 |
+| Storage format | Parquet |
+
+The generator produces clients, contracts, invoices, payments, campaigns,
+agency-monthly revenue and campaign-daily performance datasets.
+
+**Canonical working data:** `data/processed_candidate/`. This directory
+contains the validated dataset used by the forecasting pipeline and dashboard.
+
+**Preserved reference data:** `data/processed/`. This is the original
+generated dataset and is retained separately; it is not overwritten during
+candidate generation or validation.
+
+The candidate datasets were reproduced using the synchronized generator and
+default parameters. All seven regenerated DataFrames matched the candidate
+datasets exactly, including values, columns and data types. The independently
+regenerated datasets also passed all 16 data-validation tests.
+
+Generated Parquet files are local artifacts and are excluded from Git.
+To reproduce the working datasets, use the documented generation command below.
+
 ## Technology stack
 
 - **Language:** Python
@@ -113,10 +145,14 @@ pip install -r 02-deep-learning/agency-revenue-intelligence/requirements.txt
 
 ```bash
 python 02-deep-learning/agency-revenue-intelligence/src/generate_synthetic_data.py \
-  --output-dir 02-deep-learning/agency-revenue-intelligence/data/processed_candidate
+  --output-dir 02-deep-learning/agency-revenue-intelligence/data/processed_candidate \
+  --seed 42 \
+  --clients 50 \
+  --campaigns-per-client 2 \
+  --end-date 2026-10-31
 ```
 
-The generator writes to `data/processed_candidate` and does not overwrite the original processed dataset directory.
+`data/processed_candidate/` is the canonical working dataset used by the forecasting pipeline and dashboard. The generator does not overwrite the preserved original `data/processed/` directory.
 
 ### 4. Navigate to the project directory
 
@@ -211,7 +247,7 @@ See [docs/data_dictionary.md](docs/data_dictionary.md) for dataset fields and me
 - Daily campaign forecasts currently have relatively high test error.
 - Synthetic data may not reflect real agency revenue patterns or advertising behavior.
 - Historical ROAS does not establish causal advertising effectiveness.
-- SHAP explainability has been implemented and reviewed locally; Docker build and execution remain to be validated.
+- Docker image built and dashboard execution verified locally, including all four dashboard sections and the scenario simulator.
 
 See [ROADMAP.md](ROADMAP.md) for the implementation status and remaining work.
 

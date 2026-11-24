@@ -218,3 +218,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Agency Revenue Intelligence — generated local datasets
+/02-deep-learning/agency-revenue-intelligence/data/processed/
+/02-deep-learning/agency-revenue-intelligence/data/processed_candidate/
+/02-deep-learning/agency-revenue-intelligence/data/processed_reproducibility_check/
